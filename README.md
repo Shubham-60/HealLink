@@ -2,51 +2,6 @@
 
 A single platform where families can **securely manage health records, prescriptions, and appointments** for all members in one organized dashboard.
 
----
-
-## 🧾 Information Provided by Shubham Aggarwal
-
-Below are the project details provided for creating this README:
-
-1. **Project Title:**  
-   HealLink – Unified Family Health & Wellness Dashboard  
-   → A single platform where families can securely manage health records, prescriptions, and appointments for all members in one organized dashboard.
-
-2. **Problem Statement:**  
-   Managing family health records is often messy, with reports, prescriptions, and appointments scattered across different sources, making tracking and access difficult.  
-   HealLink centralizes all family health information — records, prescriptions, and reminders — into one secure, easy-to-manage dashboard.
-
-3. **System Architecture:**  
-   **Frontend → Backend (API) → Database → External Platform APIs**
-
-   - **Frontend:** Next.js (with routing for dashboard, member profiles, medical records, and appointments pages)  
-   - **Backend:** Node.js + Express.js  
-   - **Database:** MongoDB / PostgreSQL  
-   - **Authentication:** JWT / Clerk / Firebase Authentication for secure login, signup, and role-based access (Family Admin / Member)
-
-   **Hosting:**  
-   - Frontend → Vercel  
-   - Backend → Render / Railway  
-   - Database → MongoDB Atlas / ElephantSQL / Aiven
-
-4. **Key Features:**  
-   - Authentication & Authorization  
-   - CRUD Operations  
-   - Filtering, Searching & Sorting  
-   - Pagination  
-   - Frontend Routing  
-   - Dynamic Data Fetching
-
-5. **Tech Stack:**  
-   - Frontend: Next.js, TailwindCSS, ShadCN UI  
-   - Backend: Node.js, Express.js  
-   - Database: MongoDB / PostgreSQL  
-   - Authentication: JWT / Clerk / Firebase Authentication
-
-6. **API Overview:**  
-   Includes endpoints for authentication, health records, appointments, and search.
-
----
 
 ## 🧩 Problem Statement
 
