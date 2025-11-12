@@ -2,10 +2,10 @@ import bcrypt from "bcryptjs";
 import prisma from "../config/db.js";
 import generateToken from "../utils/generateToken.js";
 
-// Remove sensitive fields like hashed passwords before sending to clients.
+// Removed hashed passwords before sending to clients.
 const sanitizeUser = ({ password, ...user }) => user;
 
-// SIGNUP
+// signup
 const signup = async (req, res) => {
     try {
         const { name, username, email, password } = req.body;
@@ -49,7 +49,7 @@ const signup = async (req, res) => {
     }
 };
 
-// LOGIN
+// login
 const login = async (req, res) => {
     try {
     const { identifier, email, username, password } = req.body;
@@ -89,12 +89,12 @@ const login = async (req, res) => {
     }
 };
 
-// LOGOUT
+// logout
 const logout = (req, res) => {
     res.status(200).json({ message: "Logged out successfully" });
 };
 
-// GET PROFILE (Protected Route)
+// GET profile (Protected Route)
 const getProfile = async (req, res) => {
     try {
         // req.user is set in authMiddleware

@@ -4,7 +4,7 @@ import { useState } from "react";
 const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api";
 
 export default function AuthForms() {
-  const [form, setForm] = useState("signup"); // signup | login
+  const [form, setForm] = useState("signup");
   const [data, setData] = useState({ name: "", username: "", email: "", identifier: "", password: "" });
   const [msg, setMsg] = useState("");
 
