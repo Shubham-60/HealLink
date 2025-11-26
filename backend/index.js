@@ -1,32 +1,58 @@
-import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
-import prisma from "./src/config/db.js";
-import authRoutes from "./src/routes/authRoutes.js";
+const express = require("express");
+const dotenv = require("dotenv");
+const cors = require("cors");
+const connectDB = require("./src/config/db.js");
+const authRoutes = require("./src/routes/authRoutes.js");
 
 dotenv.config();
+
 const app = express();
 
-// Middlewares
+// Body parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({
-  origin: [`http://localhost:3000`, `${process.env.FRONTEND_URL}`],
-  credentials: true,
-}));
+
+// Manual CORS + preflight handler (fixes 403)
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
+
+  if (req.method === "OPTIONS") {
+    // Respond to preflight directly, no 403
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
+// Optional extra cors() (safe but not required)
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 // Routes
 app.get("/api/health", (req, res) => {
   res.send("HealLink API is up and running!");
 });
+
 app.use("/api/auth", authRoutes);
 
 // Start server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const startServer = async () => {
   try {
-    await prisma.$connect();
+    await connectDB();
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });

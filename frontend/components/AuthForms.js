@@ -1,7 +1,7 @@
 'use client';
 import { useState } from "react";
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api";
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5001/api";
 
 export default function AuthForms() {
   const [form, setForm] = useState("signup");

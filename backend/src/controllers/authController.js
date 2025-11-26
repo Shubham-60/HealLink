@@ -1,9 +1,13 @@
-import bcrypt from "bcryptjs";
-import prisma from "../config/db.js";
-import generateToken from "../utils/generateToken.js";
+const bcrypt = require("bcryptjs");
+const User = require("../models/User.js");
+const generateToken = require("../utils/generateToken.js");
 
 // Removed hashed passwords before sending to clients.
-const sanitizeUser = ({ password, ...user }) => user;
+const sanitizeUser = (user) => {
+    const userObj = user.toObject();
+    delete userObj.password;
+    return userObj;
+}
 
 // signup
 const signup = async (req, res) => {
@@ -13,30 +17,25 @@ const signup = async (req, res) => {
             return res.status(400).json("All fields are require!");
         }
 
-        const existingUser = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email },
-                    { username },
-                ],
-            },
-        });
+        const existingUser = await User.findOne(
+            {
+                $or:[{email},{username}]
+            }
+        )
 
         if (existingUser) {
             return res.status(400).json({ message: "Username or email already in use" })
         };
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = await prisma.user.create({
-            data: {
-                name,
-                username,
-                email,
-                password: hashedPassword,
-            },
+        const newUser = await User.create({
+            name,
+            username,
+            email,
+            password: hashedPassword,
         });
 
-        const token = generateToken(newUser.id);
+        const token = generateToken(newUser._id);
 
         res.status(201).json({
             message: "Signup successful",
@@ -59,13 +58,11 @@ const login = async (req, res) => {
             return res.status(400).json({ message: "Please provide username/email and password" });
         }
 
-        const user = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email: loginIdentifier },
-                    { username: loginIdentifier },
-                ],
-            },
+        const user = await User.findOne({
+            $or: [
+                { email: loginIdentifier },
+                { username: loginIdentifier },
+            ],
         });
 
         if (!user) {
@@ -77,7 +74,7 @@ const login = async (req, res) => {
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
-        const token = generateToken(user.id);
+        const token = generateToken(user._id);
 
         res.status(200).json({
             message: "Login successful",
@@ -111,4 +108,4 @@ const getProfile = async (req, res) => {
     }
 };
 
-export { signup, login, logout, getProfile }; 
+module.exports = { signup, login, logout, getProfile }; 
