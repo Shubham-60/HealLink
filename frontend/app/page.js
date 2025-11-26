@@ -1,7 +1,4 @@
-import AuthForms from "@/components/AuthForms";
-
-const Home = () => {
-  return <AuthForms />;
-};
-
-export default Home;
+import AuthLayout from "@/components/auth/AuthLayout";
+export default function Home() {
+  return <AuthLayout/>;
+}
