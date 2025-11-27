@@ -7,14 +7,15 @@ export default function Button({
   variant = "primary",
   disabled = false,
   fullWidth = false,
-  loading = false
+  loading = false,
+  className = ""
 }) {
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled || loading}
-      className={`btn btn-${variant} ${fullWidth ? 'btn-full' : ''} ${loading ? 'btn-loading' : ''}`}
+      className={`btn btn-${variant} ${fullWidth ? 'btn-full' : ''} ${loading ? 'btn-loading' : ''} ${className}`}
     >
       {loading ? (
         <>

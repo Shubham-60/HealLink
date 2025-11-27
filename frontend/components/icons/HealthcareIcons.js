@@ -1,4 +1,4 @@
-// Healthcare Logo Icon
+// Healthcare Logo Icon (for colored backgrounds)
 export const HeartPulseIcon = ({ size = 64, className = "" }) => (
   <svg 
     width={size} 
@@ -8,20 +8,46 @@ export const HeartPulseIcon = ({ size = 64, className = "" }) => (
     className={className}
   >
     <rect width="64" height="64" rx="16" fill="white" fillOpacity="0.1"/>
-    {/* Heart shape */}
     <path 
       d="M32 50C32 50 12 38 12 24C12 18 16 14 20 14C24 14 28 18 32 22C36 18 40 14 44 14C48 14 52 18 52 24C52 38 32 50 32 50Z" 
-      stroke="white" 
+      stroke="currentColor" 
       strokeWidth="2.5" 
-      fill="white"
-      fillOpacity="0.2"
+      fill="currentColor"
+      fillOpacity="0.12"
     />
-    {/* Pulse line */}
     <path 
       d="M16 32H24L28 26L32 38L36 28L40 32H48" 
-      stroke="white" 
+      stroke="currentColor" 
       strokeWidth="3" 
       strokeLinecap="round" 
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// Compact Logo Mark (for light navbars)
+export const HeartPulseMarkIcon = ({ size = 28, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    className={className}
+  >
+    <path
+      d="M12 20s-7-4.5-7-9a4 4 0 0 1 7-2 4 4 0 0 1 7 2c0 4.5-7 9-7 9z"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      fill="currentColor"
+      fillOpacity="0.08"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M5 12h3l2-3 2 7 2-4 2 0h3"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
       strokeLinejoin="round"
     />
   </svg>

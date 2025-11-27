@@ -72,3 +72,79 @@ export const tokenManager = {
     }
   },
 };
+
+// Shared helper for authorized requests
+const authHeaders = (token) => ({
+  Authorization: `Bearer ${token}`,
+  "Content-Type": "application/json",
+});
+
+export const recordApi = {
+  create: async (token, payload) => {
+    const res = await fetch(`${API_BASE_URL}/records`, {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+  getAll: async (token) => {
+    const res = await fetch(`${API_BASE_URL}/records`, {
+      headers: authHeaders(token),
+    });
+    return handleResponse(res);
+  },
+  get: async (token, id) => {
+    const res = await fetch(`${API_BASE_URL}/records/${id}`, {
+      headers: authHeaders(token),
+    });
+    return handleResponse(res);
+  },
+  update: async (token, id, payload) => {
+    const res = await fetch(`${API_BASE_URL}/records/${id}`, {
+      method: "PUT",
+      headers: authHeaders(token),
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+  remove: async (token, id) => {
+    const res = await fetch(`${API_BASE_URL}/records/${id}`, {
+      method: "DELETE",
+      headers: authHeaders(token),
+    });
+    return handleResponse(res);
+  },
+};
+
+export const appointmentApi = {
+  create: async (token, payload) => {
+    const res = await fetch(`${API_BASE_URL}/appointments`, {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+  getAll: async (token) => {
+    const res = await fetch(`${API_BASE_URL}/appointments`, {
+      headers: authHeaders(token),
+    });
+    return handleResponse(res);
+  },
+  update: async (token, id, payload) => {
+    const res = await fetch(`${API_BASE_URL}/appointments/${id}`, {
+      method: "PUT",
+      headers: authHeaders(token),
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+  remove: async (token, id) => {
+    const res = await fetch(`${API_BASE_URL}/appointments/${id}`, {
+      method: "DELETE",
+      headers: authHeaders(token),
+    });
+    return handleResponse(res);
+  },
+};

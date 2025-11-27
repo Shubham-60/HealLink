@@ -1,5 +1,6 @@
 'use client';
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Card from "../ui/Card";
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
@@ -8,10 +9,11 @@ import FeatureList from "../ui/FeatureList";
 
 export default function AuthLayout() {
   const [mode, setMode] = useState("login");
+  const router = useRouter();
 
   const handleSuccess = (data) => {
     console.log("Authentication successful:", data);
-    alert(`Welcome! Token saved. User: ${data.user?.name || data.user?.username}`);
+    router.push('/dashboard');
   };
 
   return (
