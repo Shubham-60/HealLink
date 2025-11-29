@@ -9,7 +9,7 @@ class ApiError extends Error {
 }
 
 const handleResponse = async (response) => {
-  const data = await response.json();
+  const data = await response.json() ;
   
   if (!response.ok) {
     throw new ApiError(data.message || "Something went wrong", response.status);
