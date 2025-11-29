@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { HeartPulseMarkIcon } from '../icons/HealthcareIcons';
-import { HomeIcon, FileTextIcon, CalendarIcon, LogOutIcon } from '../icons/DashboardIcons';
+import { HomeIcon, FileTextIcon, CalendarIcon, LogOutIcon, UsersIcon } from '../icons/DashboardIcons';
 import { tokenManager } from '@/lib/api';
 
 export default function TopNavigation({ user }) {
@@ -20,6 +20,7 @@ export default function TopNavigation({ user }) {
     { label: 'Dashboard', path: '/dashboard', icon: HomeIcon },
     { label: 'Records', path: '/dashboard/records', icon: FileTextIcon },
     { label: 'Appointments', path: '/dashboard/appointments', icon: CalendarIcon },
+    { label: 'Family', path: '/dashboard/family', icon: UsersIcon },
   ];
 
   // Close dropdown when clicking outside
