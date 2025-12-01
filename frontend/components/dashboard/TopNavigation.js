@@ -51,7 +51,9 @@ export default function TopNavigation({ user }) {
         <nav className="top-nav-menu">
           {navItems.map((item) => {
             const Icon = item.icon;
-            const isActive = pathname === item.path;
+            const isActive = item.path === '/dashboard'
+              ? pathname === '/dashboard'
+              : (pathname === item.path || pathname.startsWith(item.path + '/'));
             return (
               <button
                 key={item.path}

@@ -83,7 +83,11 @@ export default function DashboardPage() {
         subtitle="Here's an overview of your family's health"
         actions={(
           <>
-            <Button variant="outline" className="btn-new-appointment">
+            <Button
+              variant="outline"
+              className="btn-new-appointment"
+              onClick={() => router.push('/dashboard/appointments/new')}
+            >
               <CalendarIcon size={18} />
               New Appointment
             </Button>
