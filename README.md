@@ -1,13 +1,13 @@
 # 🩺 HealLink – Unified Family Health & Wellness Dashboard
 
-A single platform where families can **securely manage health records, prescriptions, and appointments** for all members in one organized dashboard.
+A single platform where families can **securely manage health records and appointments** for all members in one organized dashboard.
 
 
 ## 🧩 Problem Statement
 
-Managing family health records is often messy — reports, prescriptions, and appointments are scattered across multiple apps or physical copies, making it hard to track or access them easily.
+Managing family health information is often messy medical reports and appointments are scattered across multiple apps or physical files, making it difficult to track or access important information when needed.
 
-**HealLink** solves this by **centralizing all family health information** (medical records, prescriptions, and reminders) into one **secure, easy-to-manage dashboard** accessible anytime, anywhere.
+**HealLink** solves this by **centralizing all family health information** including medical records, health logs, and appointment reminders into one **secure, easy-to-manage dashboard** accessible anytime, anywhere.
 
 ---
 
