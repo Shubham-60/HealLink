@@ -60,9 +60,16 @@ export default function DashboardPage() {
     );
   }
 
+  // Filter upcoming appointments - only scheduled and future dates
+  const upcomingAppointments = appointments.filter(apt => {
+    const appointmentDate = new Date(apt.appointmentDate);
+    const now = new Date();
+    return apt.status === 'scheduled' && appointmentDate > now;
+  }).sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
+
   const stats = {
     records: records.length,
-    appointments: appointments.length,
+    appointments: upcomingAppointments.length,
     familyMembers: familyMembers.length,
     recentlyAdded: records.filter(r => {
       const date = new Date(r.createdAt);
@@ -72,13 +79,6 @@ export default function DashboardPage() {
       return diffDays <= 7;
     }).length
   };
-
-  // Filter upcoming appointments - only scheduled and future dates
-  const upcomingAppointments = appointments.filter(apt => {
-    const appointmentDate = new Date(apt.appointmentDate);
-    const now = new Date();
-    return apt.status === 'scheduled' && appointmentDate > now;
-  }).sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
 
   return (
     <DashboardLayout>
