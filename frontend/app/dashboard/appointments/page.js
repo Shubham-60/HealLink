@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import Button from '@/components/ui/Button';
-import { CalendarIcon, TrashIcon, CheckCircleIcon, ClockIcon } from '@/components/icons/DashboardIcons';
+import { CalendarIcon, TrashIcon, CheckCircleIcon, ClockIcon, EditIcon } from '@/components/icons/DashboardIcons';
 import { authApi, appointmentApi, tokenManager } from '@/lib/api';
 
 export default function AppointmentsPage() {
@@ -50,6 +50,10 @@ export default function AppointmentsPage() {
     }
   };
 
+  const editAppointment = (id) => {
+    router.push(`/dashboard/appointments/edit?id=${id}`);
+  };
+
   const formatDate = (iso) => new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   const formatTime = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
@@ -60,8 +64,8 @@ export default function AppointmentsPage() {
         subtitle="Schedule and manage family appointments"
         actions={(
           <Button
-            variant="outline"
-            className="btn-new-appointment"
+            variant="primary"
+            className="btn-add-record"
             onClick={() => router.push('/dashboard/appointments/new')}
           >
             <CalendarIcon size={18} />
@@ -101,8 +105,8 @@ export default function AppointmentsPage() {
                 const isCancelled = a.status === 'cancelled';
                 const isUpcoming = a.status === 'scheduled' || (!isCompleted && !isCancelled);
                 return (
-                  <tr key={a._id}>
-                    <td>{a.member?.name || 'Unknown'}</td>
+                  <tr key={a._id} className="appointment-row">
+                    <td className="font-semibold">{a.member?.name || 'Unknown'}</td>
                     <td>{a.doctor}</td>
                     <td>{formatDate(a.appointmentDate)}</td>
                     <td>{formatTime(a.appointmentDate)}</td>
@@ -119,9 +123,14 @@ export default function AppointmentsPage() {
                     </td>
                     <td className="notes-cell">{a.notes || '-'}</td>
                     <td className="actions-cell">
-                      <button className="table-btn danger" onClick={() => deleteAppointment(a._id)}>
-                        <TrashIcon size={16} /> Delete
-                      </button>
+                      <div className="action-buttons">
+                        <button className="icon-action-btn edit-btn" onClick={() => editAppointment(a._id)} title="Edit">
+                          <EditIcon size={18} />
+                        </button>
+                        <button className="icon-action-btn delete-btn" onClick={() => deleteAppointment(a._id)} title="Delete">
+                          <TrashIcon size={18} />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 );

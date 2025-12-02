@@ -88,8 +88,18 @@ export const recordApi = {
     });
     return handleResponse(res);
   },
-  getAll: async (token) => {
-    const res = await fetch(`${API_BASE_URL}/records`, {
+  getAll: async (token, params = {}) => {
+    const queryParams = new URLSearchParams();
+    if (params.search) queryParams.append('search', params.search);
+    if (params.member) queryParams.append('member', params.member);
+    if (params.sort) queryParams.append('sort', params.sort);
+    if (params.page) queryParams.append('page', params.page);
+    if (params.limit) queryParams.append('limit', params.limit);
+    
+    const queryString = queryParams.toString();
+    const url = `${API_BASE_URL}/records${queryString ? `?${queryString}` : ''}`;
+    
+    const res = await fetch(url, {
       headers: authHeaders(token),
     });
     return handleResponse(res);

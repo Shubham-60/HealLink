@@ -19,14 +19,14 @@ Managing family health records is often messy — reports, prescriptions, and ap
 - **Backend:** Node.js + Express.js  
 - **Database:** MongoDB / PostgreSQL  
 - **Authentication:** JWT / Clerk / Firebase Authentication  
-  - Role-based access: Family Admin / Member  
+
 
 ### **Hosting**
 | Layer | Platform |
 |-------|-----------|
-| Frontend | Vercel |
-| Backend | Render / Railway |
-| Database | MongoDB Atlas / ElephantSQL / Aiven |
+| Frontend | Vercel (https://heal-link-ten.vercel.app) |
+| Backend | Render (https://heallink-b8r5.onrender.com/api) |
+| Database | MongoDB Atlas (mongodb+srv://admin:admin1155@heallink.u5pppye.mongodb.net/?appName=HealLink) |
 
 ---
 

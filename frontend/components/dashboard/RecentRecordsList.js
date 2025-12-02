@@ -69,7 +69,7 @@ export default function RecentRecordsList({ initialRecords = [] }) {
                 <div className="record-info">
                   <h3 className="record-list-title">{record.title}</h3>
                   <p className="record-list-meta">
-                    {record.doctor || 'No doctor specified'} • Dr. {record.notes?.split(' ')[0] || 'General'}
+                    {record.member?.name || 'Unknown'} • {record.doctorName || record.doctor || 'No doctor specified'}
                   </p>
                 </div>
                 <div className="record-date">

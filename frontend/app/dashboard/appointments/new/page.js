@@ -49,7 +49,7 @@ export default function NewAppointmentPage() {
         member: form.memberId,
         doctor: form.doctorName,
         appointmentDate: appointmentDate.toISOString(),
-        status: 'Upcoming',
+        status: 'scheduled',
         notes: form.notes || ''
       };
       

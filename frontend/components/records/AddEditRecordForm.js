@@ -11,6 +11,14 @@ const UploadIcon = ({ size = 24 }) => (
   </svg>
 );
 
+const ExternalLinkIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+    <polyline points="15 3 21 3 21 9"/>
+    <line x1="10" y1="14" x2="21" y2="3"/>
+  </svg>
+);
+
 export default function AddEditRecordForm({ 
   onCancel, 
   onSubmit, 
@@ -230,29 +238,49 @@ export default function AddEditRecordForm({
                     {file.existing ? (
                       // existing file metadata from server
                       <>
-                        <a
-                          className="file-name"
-                          href={file.path || file.url || '#'}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {file.filename || file.name}
-                        </a>
-                        <button
-                          type="button"
-                          className="remove-file-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeFile(index);
-                          }}
-                        >
-                          ×
-                        </button>
+                        <div className="file-info-wrapper">
+                          <FileTextIcon size={20} />
+                          <span className="file-name">{file.filename || file.name}</span>
+                          {file.size && (
+                            <span className="file-size">({(file.size / 1024).toFixed(2)} KB)</span>
+                          )}
+                        </div>
+                        <div className="file-actions-wrapper">
+                          <button
+                            type="button"
+                            className="view-file-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              window.open(file.path || file.url || '#', '_blank');
+                            }}
+                            title="View file"
+                          >
+                            <ExternalLinkIcon size={16} />
+                            View
+                          </button>
+                          <button
+                            type="button"
+                            className="remove-file-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeFile(index);
+                            }}
+                            title="Remove file"
+                          >
+                            ×
+                          </button>
+                        </div>
                       </>
                     ) : (
                       // newly selected File object
                       <>
-                        <span className="file-name">{file.name}</span>
+                        <div className="file-info-wrapper">
+                          <FileTextIcon size={20} />
+                          <span className="file-name">{file.name}</span>
+                          {file.size && (
+                            <span className="file-size">({(file.size / 1024).toFixed(2)} KB)</span>
+                          )}
+                        </div>
                         <button
                           type="button"
                           className="remove-file-btn"
@@ -260,6 +288,7 @@ export default function AddEditRecordForm({
                             e.stopPropagation();
                             removeFile(index);
                           }}
+                          title="Remove file"
                         >
                           ×
                         </button>

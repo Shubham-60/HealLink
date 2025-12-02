@@ -1,17 +1,35 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import { CalendarIcon, PlusCircleIcon, ChevronLeftIcon } from '@/components/icons/DashboardIcons';
+import { CalendarIcon, PlusCircleIcon, ChevronLeftIcon, EditIcon } from '@/components/icons/DashboardIcons';
 
-export default function ScheduleAppointmentForm({ onCancel, onSubmit, familyMembers = [], submitting = false }) {
+export default function ScheduleAppointmentForm({ onCancel, onSubmit, familyMembers = [], submitting = false, initialData = null, isEditing = false }) {
   const [form, setForm] = useState({
     memberId: '',
     doctorName: '',
     date: '',
     time: '',
     notes: '',
+    status: 'scheduled',
   });
+
+  useEffect(() => {
+    if (initialData) {
+      const appointmentDate = new Date(initialData.appointmentDate);
+      const dateStr = appointmentDate.toISOString().split('T')[0];
+      const timeStr = appointmentDate.toTimeString().slice(0, 5);
+      
+      setForm({
+        memberId: initialData.member?._id || '',
+        doctorName: initialData.doctor || '',
+        date: dateStr,
+        time: timeStr,
+        notes: initialData.notes || '',
+        status: initialData.status || 'scheduled',
+      });
+    }
+  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,8 +56,8 @@ export default function ScheduleAppointmentForm({ onCancel, onSubmit, familyMemb
             <CalendarIcon size={20} />
           </div>
           <div>
-            <h2 className="section-title">Schedule New Appointment</h2>
-            <p className="section-subtitle">Fill in the details to schedule a new appointment</p>
+            <h2 className="section-title">{isEditing ? 'Edit Appointment' : 'Schedule New Appointment'}</h2>
+            <p className="section-subtitle">{isEditing ? 'Update the appointment details' : 'Fill in the details to schedule a new appointment'}</p>
           </div>
         </div>
       </div>
@@ -109,13 +127,31 @@ export default function ScheduleAppointmentForm({ onCancel, onSubmit, familyMemb
           </div>
         </div>
 
+        {isEditing && (
+          <div className="form-row">
+            <div className="form-field">
+              <label className="form-label">Status</label>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                className="input-control"
+              >
+                <option value="scheduled">Scheduled</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+              </select>
+            </div>
+          </div>
+        )}
+
         <div className="header-actions" style={{ justifyContent: 'flex-end' }}>
           <Button variant="outline" type="button" onClick={onCancel} className="btn-new-appointment" disabled={submitting}>
             Cancel
           </Button>
           <Button variant="primary" type="submit" className="btn-add-record" disabled={submitting}>
-            <PlusCircleIcon size={18} />
-            {submitting ? 'Scheduling...' : 'Schedule Appointment'}
+            {isEditing ? <EditIcon size={18} /> : <PlusCircleIcon size={18} />}
+            {submitting ? (isEditing ? 'Updating...' : 'Scheduling...') : (isEditing ? 'Update Appointment' : 'Schedule Appointment')}
           </Button>
         </div>
       </form>

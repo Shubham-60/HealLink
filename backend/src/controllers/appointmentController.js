@@ -12,7 +12,7 @@ const createAppointment = async (req, res) => {
       member,
       doctor,
       appointmentDate,
-      status: status || "Upcoming",
+      status: status || "scheduled",
       notes: notes || "",
     });
     const populated = await Appointment.findById(appt._id).populate('member', 'name relationship');

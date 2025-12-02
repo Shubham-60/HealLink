@@ -73,6 +73,13 @@ export default function DashboardPage() {
     }).length
   };
 
+  // Filter upcoming appointments - only scheduled and future dates
+  const upcomingAppointments = appointments.filter(apt => {
+    const appointmentDate = new Date(apt.appointmentDate);
+    const now = new Date();
+    return apt.status === 'scheduled' && appointmentDate > now;
+  }).sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate));
+
   return (
     <DashboardLayout>
       <DashboardHeader
@@ -106,7 +113,7 @@ export default function DashboardPage() {
       {/* Two Column Layout */}
       <div className="dashboard-two-column">
         <RecentRecordsList initialRecords={records} />
-        <UpcomingAppointmentsList appointments={appointments} />
+        <UpcomingAppointmentsList appointments={upcomingAppointments} />
       </div>
     </DashboardLayout>
   );

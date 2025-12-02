@@ -27,77 +27,91 @@ export default function HealthRecordsPage() {
   const [user, setUser] = useState(null);
   const [records, setRecords] = useState([]);
   const [familyMembers, setFamilyMembers] = useState([]);
-  const [filteredRecords, setFilteredRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [memberFilter, setMemberFilter] = useState('all');
   const [sortOrder, setSortOrder] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState({ total: 0, pages: 0 });
   const recordsPerPage = 5;
 
+  // Debounce search term
   useEffect(() => {
-    const load = async () => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500); // Wait 500ms after user stops typing
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  const fetchRecords = async () => {
+    const token = tokenManager.get();
+    if (!token) {
+      router.push('/');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      const params = {
+        search: debouncedSearchTerm || undefined,
+        member: memberFilter !== 'all' ? memberFilter : undefined,
+        sort: sortOrder,
+        page: currentPage,
+        limit: recordsPerPage
+      };
+      
+      const recordsData = await recordApi.getAll(token, params);
+      setRecords(recordsData.records || []);
+      setPagination(recordsData.pagination || { total: 0, pages: 0 });
+    } catch (err) {
+      console.error('Load records error:', err);
+      if (err.status === 401) {
+        tokenManager.remove();
+        router.push('/');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const loadInitial = async () => {
       const token = tokenManager.get();
       if (!token) {
         router.push('/');
         return;
       }
       try {
-        const [profile, recordsData, membersData] = await Promise.all([
+        const [profile, membersData] = await Promise.all([
           authApi.getProfile(token),
-          recordApi.getAll(token),
           familyMemberApi.getAll(token)
         ]);
         setUser(profile.user);
-        setRecords(recordsData.records || []);
         setFamilyMembers(membersData.members || []);
-        setFilteredRecords(recordsData.records || []);
       } catch (err) {
         console.error('Load error:', err);
         if (err.status === 401) {
           tokenManager.remove();
           router.push('/');
         }
-      } finally {
-        setLoading(false);
       }
     };
-    load();
+    loadInitial();
   }, [router]);
 
   useEffect(() => {
-    let filtered = [...records];
-
-    // Search filter
-    if (searchTerm) {
-      filtered = filtered.filter(r => 
-        r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (r.doctorName && r.doctorName.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-    }
-
-    // Member filter
-    if (memberFilter !== 'all') {
-      filtered = filtered.filter(r => r.member?._id === memberFilter);
-    }
-
-    // Sort
-    filtered.sort((a, b) => {
-      const dateA = new Date(a.recordDate);
-      const dateB = new Date(b.recordDate);
-      return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
-    });
-
-    setFilteredRecords(filtered);
-    setCurrentPage(1);
-  }, [searchTerm, memberFilter, sortOrder, records]);
+    fetchRecords();
+  }, [debouncedSearchTerm, memberFilter, sortOrder, currentPage]);
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this record?')) return;
     try {
       const token = tokenManager.get();
       await recordApi.remove(token, id);
-      setRecords(prev => prev.filter(r => r._id !== id));
+      // Refresh records after deletion
+      fetchRecords();
     } catch (err) {
       console.error('Failed to delete record:', err);
       alert(err.message || 'Failed to delete record');
@@ -105,8 +119,7 @@ export default function HealthRecordsPage() {
   };
 
   const handleView = (id) => {
-    console.log('View record:', id);
-    // TODO: Navigate to view page or open modal
+    router.push(`/dashboard/records/${id}`);
   };
 
   const handleEdit = (id) => {
@@ -118,12 +131,6 @@ export default function HealthRecordsPage() {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
-  // Pagination
-  const indexOfLastRecord = currentPage * recordsPerPage;
-  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
-  const currentRecords = filteredRecords.slice(indexOfFirstRecord, indexOfLastRecord);
-  const totalPages = Math.ceil(filteredRecords.length / recordsPerPage);
-
   const getTypeBadgeClass = (type) => {
     const classes = {
       'Checkup': 'type-checkup',
@@ -132,6 +139,25 @@ export default function HealthRecordsPage() {
       'Lab Result': 'type-lab',
     };
     return classes[type] || 'type-default';
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
+  const handleMemberFilterChange = (e) => {
+    setMemberFilter(e.target.value);
+    setCurrentPage(1); // Reset to first page on filter change
+  };
+
+  const handleSortChange = (e) => {
+    setSortOrder(e.target.value);
+    setCurrentPage(1); // Reset to first page on sort change
   };
 
   if (loading) {
@@ -170,14 +196,14 @@ export default function HealthRecordsPage() {
             type="text"
             placeholder="Search by title or doctor..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={handleSearchChange}
             className="search-input-records"
           />
         </div>
         <div className="filters-wrapper">
           <select
             value={memberFilter}
-            onChange={(e) => setMemberFilter(e.target.value)}
+            onChange={handleMemberFilterChange}
             className="filter-select-records"
           >
             <option value="all">All Members</option>
@@ -187,7 +213,7 @@ export default function HealthRecordsPage() {
           </select>
           <select
             value={sortOrder}
-            onChange={(e) => setSortOrder(e.target.value)}
+            onChange={handleSortChange}
             className="filter-select-records"
           >
             <option value="newest">Newest First</option>
@@ -210,12 +236,12 @@ export default function HealthRecordsPage() {
             </tr>
           </thead>
           <tbody>
-            {currentRecords.length === 0 ? (
+            {records.length === 0 ? (
               <tr>
                 <td colSpan={6} className="empty-row">No records found</td>
               </tr>
             ) : (
-              currentRecords.map((record) => (
+              records.map((record) => (
                 <tr key={record._id} className="record-row">
                   <td className="record-title">{record.title}</td>
                   <td>
@@ -258,24 +284,27 @@ export default function HealthRecordsPage() {
         </table>
 
         {/* Pagination */}
-        {filteredRecords.length > 0 && (
+        {pagination.total > 0 && (
           <div className="pagination-container">
             <div className="pagination-info">
-              Showing {indexOfFirstRecord + 1} to {Math.min(indexOfLastRecord, filteredRecords.length)} of {filteredRecords.length} records
+              Showing {((currentPage - 1) * recordsPerPage) + 1} to {Math.min(currentPage * recordsPerPage, pagination.total)} of {pagination.total} records
             </div>
             <div className="pagination-controls">
               <button
                 className="pagination-btn"
-                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                onClick={() => handlePageChange(currentPage - 1)}
                 disabled={currentPage === 1}
               >
                 <ChevronLeftIcon size={16} />
                 Previous
               </button>
+              <span className="pagination-pages">
+                Page {currentPage} of {pagination.pages}
+              </span>
               <button
                 className="pagination-btn"
-                onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === pagination.pages}
               >
                 Next
                 <ChevronRightIcon size={16} />

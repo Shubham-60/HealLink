@@ -1,6 +1,6 @@
 const express = require("express");
 const { protect } = require("../middleware/authMiddleware.js");
-const { createAppointment, getAppointments, updateAppointment, deleteAppointment } = require("../controllers/appointmentController.js");
+const { createAppointment, getAppointments, getAppointment, updateAppointment, deleteAppointment } = require("../controllers/appointmentController.js");
 
 const router = express.Router();
 
@@ -11,6 +11,7 @@ router.route("/")
   .get(getAppointments);
 
 router.route("/:id")
+  .get(getAppointment)
   .put(updateAppointment)
   .delete(deleteAppointment);
 

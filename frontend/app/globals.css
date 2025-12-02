@@ -361,6 +361,38 @@ body {
   transform: translateY(0);
 }
 
+.btn-secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #e2e8f0;
+  color: #334155;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #dc2626;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.btn-danger:active:not(:disabled) {
+  transform: translateY(0);
+}
+
 .btn-full {
   width: 100%;
 }
@@ -1244,41 +1276,102 @@ textarea.input-control { resize: vertical; }
   border: 1px solid #E8EDF2;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 .data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
 .data-table thead th {
   text-align: left;
   font-weight: 600;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  background: #F8FAFB;
-  padding: 0.9rem 1rem;
-  border-bottom: 1px solid #E8EDF2;
+  color: #94a3b8;
+  font-size: 0.875rem;
+  background: transparent;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  text-transform: capitalize;
 }
 .data-table tbody td {
-  padding: 1rem;
-  border-bottom: 1px solid #F1F5F9;
+  padding: 1.5rem 1.5rem;
+  border-bottom: 1px solid #f8fafc;
   color: var(--text-primary);
-  font-size: 0.95rem;
+  font-size: 0.9375rem;
+  vertical-align: middle;
 }
 .data-table tbody tr:last-child td { border-bottom: none; }
-.col-actions { width: 140px; text-align: right; }
+.data-table tbody tr.appointment-row {
+  transition: background-color 0.15s ease;
+}
+.data-table tbody tr.appointment-row:hover {
+  background-color: #fafbfc;
+}
+.col-actions { width: 120px; text-align: right; }
 .actions-cell { text-align: right; }
-.notes-cell { color: var(--text-secondary); }
+.notes-cell { color: #94a3b8; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.font-semibold { font-weight: 600; }
+
+/* Action buttons - hidden by default, show on hover */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.appointment-row:hover .action-buttons {
+  opacity: 1;
+}
+
+.icon-action-btn {
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+.icon-action-btn.edit-btn {
+  color: #334155;
+}
+.icon-action-btn.edit-btn:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+.icon-action-btn.delete-btn {
+  color: #ef4444;
+}
+.icon-action-btn.delete-btn:hover {
+  background-color: #fef2f2;
+  color: #dc2626;
+}
 
 .status-pill {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  padding: 0.25rem 0.5rem;
+  padding: 0.375rem 0.75rem;
   border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  font-weight: 500;
 }
-.status-upcoming { background: rgba(37,99,235,0.1); color: #2563eb; border: 1px solid rgba(37,99,235,0.18); }
-.status-completed { background: #E8F6EF; color: #16a34a; border: 1px solid rgba(22,163,74,0.2); }
-.status-cancelled { background: #FDECEC; color: #dc2626; border: 1px solid rgba(220,38,38,0.2); }
+.status-upcoming { 
+  background: rgba(14, 165, 233, 0.1); 
+  color: #0ea5e9; 
+  border: 1px solid rgba(14, 165, 233, 0.2); 
+}
+.status-completed { 
+  background: rgba(16, 185, 129, 0.1); 
+  color: #10b981; 
+  border: 1px solid rgba(16, 185, 129, 0.2); 
+}
+.status-cancelled { 
+  background: rgba(239, 68, 68, 0.1); 
+  color: #ef4444; 
+  border: 1px solid rgba(239, 68, 68, 0.2); 
+}
 
 .table-btn {
   display: inline-flex; align-items: center; gap: 0.4rem;
@@ -1617,7 +1710,7 @@ textarea.input-control { resize: vertical; }
 .search-wrapper {
   flex: 1;
   position: relative;
-  max-width: 400px;
+  max-width: 1000px;
 }
 
 .search-icon {
@@ -1841,6 +1934,14 @@ textarea.input-control { resize: vertical; }
 .pagination-controls {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
+}
+
+.pagination-pages {
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
 .pagination-btn {

@@ -31,11 +31,56 @@ const createRecord = async (req, res) => {
 // Get all records for current user
 const getRecords = async (req, res) => {
   try {
-    const records = await HealthRecord.find({ user: req.user._id })
+    const { search, member, sort, page = 1, limit = 10 } = req.query;
+    
+    // Build query
+    let query = { user: req.user._id };
+    
+    // Search filter
+    if (search) {
+      query.$or = [
+        { title: { $regex: search, $options: 'i' } },
+        { doctor: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    // Member filter
+    if (member && member !== 'all') {
+      query.member = member;
+    }
+    
+    // Determine sort order
+    let sortOption = { recordDate: -1 }; // Default: newest first
+    if (sort === 'oldest') {
+      sortOption = { recordDate: 1 };
+    }
+    
+    // Calculate pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+    
+    // Get total count for pagination
+    const total = await HealthRecord.countDocuments(query);
+    
+    // Fetch records with filters, sorting, and pagination
+    const records = await HealthRecord.find(query)
       .populate('member', 'name relationship')
-      .sort({ recordDate: -1 });
-    res.status(200).json({ records });
+      .sort(sortOption)
+      .skip(skip)
+      .limit(limitNum);
+    
+    res.status(200).json({ 
+      records,
+      pagination: {
+        total,
+        page: pageNum,
+        limit: limitNum,
+        pages: Math.ceil(total / limitNum)
+      }
+    });
   } catch (err) {
+    console.error("Get records error", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
