@@ -12,6 +12,7 @@ export default function SignupForm({ onSwitchToLogin, onSuccess }) {
     username: "",
     email: "",
     password: "",
+    dateOfBirth: "",
   });
   const [loading, setLoading] = useState(false);
   const [alert, setAlert] = useState({ message: "", type: "" });
@@ -31,6 +32,8 @@ export default function SignupForm({ onSwitchToLogin, onSuccess }) {
         username: formData.username.trim(),
         email: formData.email.trim(),
         password: formData.password,
+        // Send optional DOB to backend to set on Self family member
+        dateOfBirth: formData.dateOfBirth ? formData.dateOfBirth : undefined,
       });
 
       tokenManager.set(data.token);
@@ -108,6 +111,15 @@ export default function SignupForm({ onSwitchToLogin, onSuccess }) {
           required
           icon={LockIcon}
           showPasswordToggle
+        />
+
+        <Input
+          label="Date of Birth (optional)"
+          type="date"
+          name="dateOfBirth"
+          value={formData.dateOfBirth}
+          onChange={handleChange}
+          placeholder=""
         />
 
         <Button 

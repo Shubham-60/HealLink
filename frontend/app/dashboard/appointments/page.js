@@ -54,7 +54,7 @@ export default function AppointmentsPage() {
   const formatTime = (iso) => new Date(iso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
 
   return (
-    <DashboardLayout user={user}>
+    <DashboardLayout>
       <DashboardHeader
         title={<><span>Appointments</span></>}
         subtitle="Schedule and manage family appointments"
@@ -102,7 +102,7 @@ export default function AppointmentsPage() {
                 const isUpcoming = a.status === 'scheduled' || (!isCompleted && !isCancelled);
                 return (
                   <tr key={a._id}>
-                    <td>{user?.name || 'You'}</td>
+                    <td>{a.member?.name || 'Unknown'}</td>
                     <td>{a.doctor}</td>
                     <td>{formatDate(a.appointmentDate)}</td>
                     <td>{formatTime(a.appointmentDate)}</td>

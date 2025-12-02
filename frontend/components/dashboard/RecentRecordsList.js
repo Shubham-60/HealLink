@@ -2,8 +2,10 @@
 import { useState } from 'react';
 import { FileTextIcon, ActivityIcon } from '../icons/DashboardIcons';
 import { StethoscopeIcon } from '../icons/HealthcareIcons';
+import { useRouter } from 'next/navigation';
 
 export default function RecentRecordsList({ initialRecords = [] }) {
+  const router = useRouter();
   const [records] = useState(initialRecords.slice(0, 5));
 
   const getRecordIcon = (type) => {
@@ -43,7 +45,10 @@ export default function RecentRecordsList({ initialRecords = [] }) {
             <p className="section-subtitle">Last 5 health records added</p>
           </div>
         </div>
-        <button className="view-all-link">
+        <button 
+          className="view-all-link"
+          onClick={() => router.push('/dashboard/records')}
+        >
           View All <span className="arrow-right">→</span>
         </button>
       </div>

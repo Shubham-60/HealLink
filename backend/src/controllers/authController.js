@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User.js");
 const generateToken = require("../utils/generateToken.js");
+const FamilyMember = require("../models/FamilyMember.js");
 
 // Removed hashed passwords before sending to clients.
 const sanitizeUser = (user) => {
@@ -12,7 +13,7 @@ const sanitizeUser = (user) => {
 // signup
 const signup = async (req, res) => {
     try {
-        const { name, username, email, password } = req.body;
+        const { name, username, email, password, dateOfBirth } = req.body;
         if (!name || !username || !email || !password) {
             return res.status(400).json("All fields are require!");
         }
@@ -34,6 +35,20 @@ const signup = async (req, res) => {
             email,
             password: hashedPassword,
         });
+
+        // Create a default self family member for the user
+        try {
+            await FamilyMember.create({
+                user: newUser._id,
+                name: newUser.name,
+                relationship: "Self",
+                // Accept optional dateOfBirth from signup
+                dateOfBirth: dateOfBirth ? new Date(dateOfBirth) : undefined,
+            });
+        } catch (fmErr) {
+            // Don't block signup if family member creation fails
+            console.error("Failed to create default family member:", fmErr);
+        }
 
         const token = generateToken(newUser._id);
 

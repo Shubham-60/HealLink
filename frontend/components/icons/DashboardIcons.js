@@ -152,3 +152,19 @@ export const ChartBarIcon = ({ size = 20, className = "" }) => (
     <line x1="6" y1="20" x2="6" y2="14"/>
   </svg>
 );
+
+export const ChevronRightIcon = ({ size = 18, className = "" }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+  >
+    <polyline points="9 18 15 12 9 6" />
+  </svg>
+);

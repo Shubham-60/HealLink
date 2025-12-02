@@ -4,7 +4,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { CalendarIcon, PlusCircleIcon, ChevronLeftIcon } from '@/components/icons/DashboardIcons';
 
-export default function ScheduleAppointmentForm({ onCancel, onSubmit, familyMembers = [] }) {
+export default function ScheduleAppointmentForm({ onCancel, onSubmit, familyMembers = [], submitting = false }) {
   const [form, setForm] = useState({
     memberId: '',
     doctorName: '',
@@ -110,12 +110,12 @@ export default function ScheduleAppointmentForm({ onCancel, onSubmit, familyMemb
         </div>
 
         <div className="header-actions" style={{ justifyContent: 'flex-end' }}>
-          <Button variant="outline" type="button" onClick={onCancel} className="btn-new-appointment">
+          <Button variant="outline" type="button" onClick={onCancel} className="btn-new-appointment" disabled={submitting}>
             Cancel
           </Button>
-          <Button variant="primary" type="submit" className="btn-add-record">
+          <Button variant="primary" type="submit" className="btn-add-record" disabled={submitting}>
             <PlusCircleIcon size={18} />
-            Schedule Appointment
+            {submitting ? 'Scheduling...' : 'Schedule Appointment'}
           </Button>
         </div>
       </form>

@@ -5,6 +5,7 @@ const connectDB = require("./src/config/db.js");
 const authRoutes = require("./src/routes/authRoutes.js");
 const recordRoutes = require("./src/routes/recordRoutes.js");
 const appointmentRoutes = require("./src/routes/appointmentRoutes.js");
+const familyRoutes = require("./src/routes/familyRoutes.js");
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.get("/api/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/records", recordRoutes);
 app.use("/api/appointments", appointmentRoutes);
+app.use("/api/family", familyRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5001;

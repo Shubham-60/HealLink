@@ -2,10 +2,10 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import ScheduleAppointmentForm from '@/components/appointments/ScheduleAppointmentForm';
-import { appointmentApi, familyMemberApi, tokenManager } from '@/lib/api';
+import AddEditRecordForm from '@/components/records/AddEditRecordForm';
+import { recordApi, familyMemberApi, tokenManager } from '@/lib/api';
 
-export default function NewAppointmentPage() {
+export default function AddRecordPage() {
   const router = useRouter();
   const [familyMembers, setFamilyMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,9 +31,11 @@ export default function NewAppointmentPage() {
     }
   };
 
-  const handleCancel = () => router.push('/dashboard/appointments');
-  
-  const handleSubmit = async (form) => {
+  const handleCancel = () => {
+    router.push('/dashboard/records');
+  };
+
+  const handleSubmit = async (formData) => {
     try {
       setSubmitting(true);
       const token = tokenManager.get();
@@ -42,22 +44,21 @@ export default function NewAppointmentPage() {
         return;
       }
       
-      // Combine date and time into appointmentDate
-      const appointmentDate = new Date(`${form.date}T${form.time}`);
-      
       const payload = {
-        member: form.memberId,
-        doctor: form.doctorName,
-        appointmentDate: appointmentDate.toISOString(),
-        status: 'Upcoming',
-        notes: form.notes || ''
+        title: formData.title,
+        type: formData.type, // Use as-is, matches backend enum
+        member: formData.memberId,
+        doctor: formData.doctorName,
+        recordDate: formData.date,
+        notes: formData.notes || ''
       };
       
-      await appointmentApi.create(token, payload);
-      router.push('/dashboard/appointments');
+      // TODO: Handle file uploads when backend supports it
+      await recordApi.create(token, payload);
+      router.push('/dashboard/records');
     } catch (err) {
-      console.error('Failed to create appointment:', err);
-      alert(err.message || 'Failed to schedule appointment');
+      console.error('Failed to add record:', err);
+      alert(err.message || 'Failed to add health record');
     } finally {
       setSubmitting(false);
     }
@@ -75,10 +76,11 @@ export default function NewAppointmentPage() {
 
   return (
     <DashboardLayout>
-      <ScheduleAppointmentForm 
+      <AddEditRecordForm
         onCancel={handleCancel}
         onSubmit={handleSubmit}
         familyMembers={familyMembers}
+        isEdit={false}
         submitting={submitting}
       />
     </DashboardLayout>

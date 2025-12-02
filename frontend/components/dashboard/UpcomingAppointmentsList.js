@@ -1,37 +1,20 @@
 'use client';
 import { CalendarIcon, ClockIcon } from '../icons/DashboardIcons';
+import { useRouter } from 'next/navigation';
 
 export default function UpcomingAppointmentsList({ appointments = [] }) {
-  // Mock data for demonstration
-  const mockAppointments = [
-    {
-      id: 1,
-      patientName: 'Shubham',
-      doctor: 'Dr. Rajesh Kumar',
-      date: '2025-03-01',
-      time: '10:00 AM'
-    },
-    {
-      id: 2,
-      patientName: 'Arjun',
-      doctor: 'Dr. Sanjay Patel',
-      date: '2025-03-05',
-      time: '2:30 PM'
-    },
-    {
-      id: 3,
-      patientName: 'Priya',
-      doctor: 'Dr. Meera Sharma',
-      date: '2025-03-10',
-      time: '11:00 AM'
-    }
-  ];
-
-  const displayAppointments = appointments.length > 0 ? appointments.slice(0, 3) : mockAppointments;
+  const router = useRouter();
+  // Use real backend data if available; otherwise show nothing
+  const displayAppointments = (appointments || []).slice(0, 3);
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const formatTime = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   };
 
   const getIconColor = (index) => {
@@ -55,16 +38,23 @@ export default function UpcomingAppointmentsList({ appointments = [] }) {
             <p className="section-subtitle">Next scheduled appointments</p>
           </div>
         </div>
-        <button className="view-all-link">
+        <button
+         className="view-all-link"
+         onClick={() => {router.push('/dashboard/appointments')}}
+        >
           View All <span className="arrow-right">→</span>
         </button>
       </div>
 
       <div className="appointments-list">
-        {displayAppointments.map((appointment, index) => {
+        {displayAppointments.length === 0 ? (
+          <div className="empty-row" style={{ padding: '1rem 0', color: '#64748b' }}>
+            No appointments yet
+          </div>
+        ) : displayAppointments.map((appointment, index) => {
           const iconStyle = getIconColor(index);
           return (
-            <div key={appointment.id} className="appointment-list-item">
+            <div key={appointment._id || index} className="appointment-list-item">
               <div 
                 className="appointment-icon-circle"
                 style={{ backgroundColor: iconStyle.bg, color: iconStyle.color }}
@@ -72,12 +62,12 @@ export default function UpcomingAppointmentsList({ appointments = [] }) {
                 <ClockIcon size={20} />
               </div>
               <div className="appointment-info">
-                <h3 className="appointment-list-title">{appointment.patientName}</h3>
+                <h3 className="appointment-list-title">{appointment.member?.name || 'Unknown'}</h3>
                 <p className="appointment-list-meta">{appointment.doctor}</p>
               </div>
               <div className="appointment-datetime">
-                <div className="appointment-date">{formatDate(appointment.date)}</div>
-                <div className="appointment-time">{appointment.time}</div>
+                <div className="appointment-date">{formatDate(appointment.appointmentDate)}</div>
+                <div className="appointment-time">{formatTime(appointment.appointmentDate)}</div>
               </div>
             </div>
           );

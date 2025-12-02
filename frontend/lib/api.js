@@ -132,6 +132,12 @@ export const appointmentApi = {
     });
     return handleResponse(res);
   },
+  get: async (token, id) => {
+    const res = await fetch(`${API_BASE_URL}/appointments/${id}`, {
+      headers: authHeaders(token),
+    });
+    return handleResponse(res);
+  },
   update: async (token, id, payload) => {
     const res = await fetch(`${API_BASE_URL}/appointments/${id}`, {
       method: "PUT",
@@ -148,3 +154,42 @@ export const appointmentApi = {
     return handleResponse(res);
   },
 };
+
+export const familyMemberApi = {
+  create: async (token, payload) => {
+    const res = await fetch(`${API_BASE_URL}/family`, {
+      method: "POST",
+      headers: authHeaders(token),
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+  getAll: async (token) => {
+    const res = await fetch(`${API_BASE_URL}/family`, {
+      headers: authHeaders(token),
+    });
+    return handleResponse(res);
+  },
+  get: async (token, id) => {
+    const res = await fetch(`${API_BASE_URL}/family/${id}`, {
+      headers: authHeaders(token),
+    });
+    return handleResponse(res);
+  },
+  update: async (token, id, payload) => {
+    const res = await fetch(`${API_BASE_URL}/family/${id}`, {
+      method: "PUT",
+      headers: authHeaders(token),
+      body: JSON.stringify(payload),
+    });
+    return handleResponse(res);
+  },
+  remove: async (token, id) => {
+    const res = await fetch(`${API_BASE_URL}/family/${id}`, {
+      method: "DELETE",
+      headers: authHeaders(token),
+    });
+    return handleResponse(res);
+  },
+};
+

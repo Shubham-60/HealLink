@@ -4,12 +4,15 @@ import { useRouter, usePathname } from 'next/navigation';
 import { HeartPulseMarkIcon } from '../icons/HealthcareIcons';
 import { HomeIcon, FileTextIcon, CalendarIcon, LogOutIcon, UsersIcon } from '../icons/DashboardIcons';
 import { tokenManager } from '@/lib/api';
+import { useUser } from '@/components/auth/UserProvider';
 
 export default function TopNavigation({ user }) {
   const router = useRouter();
   const pathname = usePathname();
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
+  const { user: ctxUser } = useUser();
+  const effectiveUser = user || ctxUser;
 
   const logout = () => {
     tokenManager.remove();
@@ -77,9 +80,9 @@ export default function TopNavigation({ user }) {
               onClick={() => setShowDropdown(!showDropdown)}
             >
               <div className="user-avatar-small">
-                {user?.name?.charAt(0).toUpperCase() || 'U'}
+                {effectiveUser?.name?.charAt(0).toUpperCase() || 'U'}
               </div>
-              <span className="user-name-small">{user?.name || 'User'}</span>
+              <span className="user-name-small">{effectiveUser?.name || 'User'}</span>
             </div>
             
             {showDropdown && (
