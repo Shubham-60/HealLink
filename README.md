@@ -26,7 +26,7 @@ Managing family health information is often messy medical reports and appointmen
 |-------|-----------|
 | Frontend | Vercel (https://heal-link-ten.vercel.app) |
 | Backend | Render (https://heallink-b8r5.onrender.com/api) |
-| Database | MongoDB Atlas (mongodb+srv://admin:admin1155@heallink.u5pppye.mongodb.net/?appName=HealLink) |
+| Database | MongoDB Atlas |
 
 ---
 
