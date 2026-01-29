@@ -1,13 +1,17 @@
 const HealthRecord = require("../models/HealthRecord.js");
+const cloudinary = require("../config/cloudinary.js");
 
 // Create a new health record
 const createRecord = async (req, res) => {
   try {
-    const { title, type, member, doctor, recordDate, notes } = req.body;
+    const { title, type, member, doctor, recordDate, notes, files } = req.body;
     
     if (!title || !member || !recordDate) {
       return res.status(400).json({ message: "Title, member, and record date are required" });
     }
+    
+    // Files array should contain Cloudinary metadata from frontend
+    const fileMetadata = Array.isArray(files) ? files : [];
     
     const record = await HealthRecord.create({
       user: req.user._id,
@@ -17,7 +21,7 @@ const createRecord = async (req, res) => {
       doctor: doctor || "",
       recordDate,
       notes: notes || "",
-      files: [] // TODO: Add file upload handling with multer
+      files: fileMetadata
     });
     
     const populated = await HealthRecord.findById(record._id).populate('member', 'name relationship');
@@ -100,17 +104,45 @@ const getRecord = async (req, res) => {
 // Update record
 const updateRecord = async (req, res) => {
   try {
-    const { title, type, member, doctor, recordDate, notes } = req.body;
+    const { title, type, member, doctor, recordDate, notes, files, filesToDelete } = req.body;
+    
+    // Handle file deletions from Cloudinary
+    if (filesToDelete && Array.isArray(filesToDelete) && filesToDelete.length > 0) {
+      const deletionPromises = filesToDelete.map(file => {
+        if (file.cloudinaryPublicId) {
+          return cloudinary.uploader.destroy(file.cloudinaryPublicId)
+            .catch(err => console.error(`Failed to delete file ${file.cloudinaryPublicId}:`, err));
+        }
+        return Promise.resolve();
+      });
+      
+      await Promise.allSettled(deletionPromises);
+    }
+    
+    const updateData = {
+      title,
+      type,
+      member,
+      doctor,
+      recordDate,
+      notes
+    };
+    
+    // Update files if provided
+    if (files) {
+      updateData.files = Array.isArray(files) ? files : [];
+    }
     
     const updated = await HealthRecord.findOneAndUpdate(
       { _id: req.params.id, user: req.user._id },
-      { title, type, member, doctor, recordDate, notes },
+      updateData,
       { new: true }
     ).populate('member', 'name relationship');
     
     if (!updated) return res.status(404).json({ message: "Record not found" });
     res.status(200).json({ message: "Record updated", record: updated });
   } catch (err) {
+    console.error("Update record error", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
@@ -118,12 +150,74 @@ const updateRecord = async (req, res) => {
 // Delete record
 const deleteRecord = async (req, res) => {
   try {
-    const deleted = await HealthRecord.findOneAndDelete({ _id: req.params.id, user: req.user._id });
-    if (!deleted) return res.status(404).json({ message: "Record not found" });
+    const record = await HealthRecord.findOne({ _id: req.params.id, user: req.user._id });
+    if (!record) return res.status(404).json({ message: "Record not found" });
+    
+    // Delete all files from Cloudinary before deleting the record
+    if (record.files && record.files.length > 0) {
+      const deletionPromises = record.files.map(file => {
+        if (file.cloudinaryPublicId) {
+          return cloudinary.uploader.destroy(file.cloudinaryPublicId)
+            .catch(err => console.error(`Failed to delete file ${file.cloudinaryPublicId}:`, err));
+        }
+        return Promise.resolve();
+      });
+      
+      await Promise.allSettled(deletionPromises);
+    }
+    
+    await HealthRecord.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Record deleted" });
   } catch (err) {
+    console.error("Delete record error", err);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-module.exports = { createRecord, getRecords, getRecord, updateRecord, deleteRecord };
+// Delete specific files from a record
+const deleteRecordFiles = async (req, res) => {
+  try {
+    const { filesToDelete } = req.body; // Array of cloudinaryPublicIds
+    
+    if (!filesToDelete || !Array.isArray(filesToDelete) || filesToDelete.length === 0) {
+      return res.status(400).json({ message: "filesToDelete array is required" });
+    }
+    
+    // Validate record ownership
+    const record = await HealthRecord.findOne({ 
+      _id: req.params.id, 
+      user: req.user._id 
+    });
+    
+    if (!record) {
+      return res.status(404).json({ message: "Record not found" });
+    }
+    
+    // Delete from Cloudinary
+    const deletionResults = await Promise.allSettled(
+      filesToDelete.map(publicId => 
+        cloudinary.uploader.destroy(publicId)
+      )
+    );
+    
+    // Update database (remove files from array)
+    record.files = record.files.filter(
+      f => !filesToDelete.includes(f.cloudinaryPublicId)
+    );
+    await record.save();
+    
+    // Count failures
+    const failed = deletionResults.filter(r => r.status === 'rejected');
+    
+    res.status(200).json({ 
+      message: "Files processed",
+      deleted: filesToDelete.length - failed.length,
+      failed: failed.length
+    });
+  } catch (err) {
+    console.error("Delete record files error", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { createRecord, getRecords, getRecord, updateRecord, deleteRecord, deleteRecordFiles };

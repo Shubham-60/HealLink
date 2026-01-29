@@ -1,6 +1,6 @@
 const express = require("express");
 const { protect } = require("../middleware/authMiddleware.js");
-const { createRecord, getRecords, getRecord, updateRecord, deleteRecord } = require("../controllers/recordController.js");
+const { createRecord, getRecords, getRecord, updateRecord, deleteRecord, deleteRecordFiles } = require("../controllers/recordController.js");
 
 const router = express.Router();
 
@@ -14,5 +14,8 @@ router.route("/:id")
   .get(getRecord)
   .put(updateRecord)
   .delete(deleteRecord);
+
+router.route("/:id/files/delete")
+  .post(deleteRecordFiles);
 
 module.exports = router;

@@ -3212,6 +3212,12 @@ textarea.form-input {
   background: rgba(37, 99, 235, 0.02);
 }
 
+.file-upload-area.drag-over {
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+  border-style: solid;
+}
+
 .file-upload-area svg {
   color: #9CA3AF;
 }
@@ -3245,7 +3251,7 @@ textarea.form-input {
   gap: 0.5rem;
 }
 
-.uploaded-file-item {
+.file-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -3258,10 +3264,10 @@ textarea.form-input {
 .file-name {
   font-size: 0.875rem;
   color: var(--text-primary);
-  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 300px;
 }
 
 .remove-file-btn {
@@ -3284,6 +3290,163 @@ textarea.form-input {
 .remove-file-btn:hover {
   background: #E5E7EB;
   color: #dc2626;
+}
+
+/* Progress Bar and Upload Status */
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  flex: 1;
+  width: 100%;
+}
+
+.progress-wrapper > div:first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.progress-text {
+  font-size: 13px;
+  color: #475569;
+  min-width: 40px;
+  text-align: right;
+  font-weight: 600;
+}
+
+.upload-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.upload-status.uploading {
+  color: #0066cc;
+  background-color: #e6f2ff;
+}
+
+.upload-status.complete {
+  color: #22863a;
+  background-color: #f0f4ea;
+}
+
+.upload-status.failed {
+  color: #cb2431;
+  background-color: #ffeef0;
+}
+
+/* File Info Wrapper - Updated for new layout */
+.file-info-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.file-size {
+  font-size: 0.8rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+/* Retry Button */
+.retry-btn {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #2563eb;
+  background-color: #dbeafe;
+  border: 1px solid #93c5fd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.retry-btn:hover {
+  background-color: #bfdbfe;
+  border-color: #60a5fa;
+}
+
+.retry-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Warning Actions */
+.warning-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+/* Alert Styling */
+[role="alert"] {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+[role="alert"][variant="destructive"] {
+  background-color: #fef2f2;
+  border-color: #fecaca;
+}
+
+[role="alert"] h5 {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+[role="alert"][variant="destructive"] h5 {
+  color: #991b1b;
+}
+
+[role="alert"] > svg {
+  margin-right: 8px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* File Item Layout */
+.uploaded-file-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.view-file-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: #2563eb;
+  background: transparent;
+  border: 1px solid #93c5fd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.view-file-btn:hover {
+  background: #dbeafe;
+  border-color: #60a5fa;
 }
 
 /* Responsive - Record Form */

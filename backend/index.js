@@ -6,6 +6,7 @@ const authRoutes = require("./src/routes/authRoutes.js");
 const recordRoutes = require("./src/routes/recordRoutes.js");
 const appointmentRoutes = require("./src/routes/appointmentRoutes.js");
 const familyRoutes = require("./src/routes/familyRoutes.js");
+const { scheduleCleanupJob } = require("./src/utils/cleanupJob.js");
 
 dotenv.config();
 
@@ -38,6 +39,10 @@ const PORT = process.env.PORT || 5001;
 const startServer = async () => {
   try {
     await connectDB();
+    
+    // Schedule the Cloudinary cleanup job
+    scheduleCleanupJob();
+    
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });

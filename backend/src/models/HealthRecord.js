@@ -16,10 +16,12 @@ const HealthRecordSchema = new mongoose.Schema(
     notes: { type: String, default: "" },
     files: [{
       filename: String,
-      path: String,
+      cloudinaryUrl: String,
+      cloudinaryPublicId: String,
       mimetype: String,
       size: Number,
-      uploadedAt: { type: Date, default: Date.now }
+      uploadedAt: { type: Date, default: Date.now },
+      markedForDeletion: { type: Date, default: null }
     }]
   },
   { timestamps: true }
